@@ -2,7 +2,7 @@ name: Create Issue on Test Failure
 
 on:
   workflow_run:
-    workflows: ["Run Tests"]
+    workflows: ["Decide-Lorca application"]
     types:
       - completed
 
