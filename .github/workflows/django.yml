@@ -43,22 +43,13 @@ jobs:
       id: test
       run: |
         cd decide
-        coverage run --branch --source=. ./manage.py test booth -v 2 --keepdb 
+        coverage run --branch --source=. ./manage.py test -v 2 --keepdb 
         echo "::set-output name=tests_failed::$(echo $?)"
 
     - name: Create Issue on Test Failure
       if: steps.test.outputs.tests_failed != '0'
-      uses: actions/github-script@v5
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const issueTitle = 'Failure in CI - Module Name';
-          const issueBody = 'Se han encontrado errores en la ejecución de tests. ¡Por favor, verifica y soluciona el problema!';
-          const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-          const newIssue = await octokit.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: issueTitle,
-            body: issueBody
-          });
-          console.log(`Se ha creado un nuevo issue: ${newIssue.data.html_url}`);
+      run: node create_issue.js
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
