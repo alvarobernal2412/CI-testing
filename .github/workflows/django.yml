@@ -47,7 +47,3 @@ jobs:
           cd decide
           coverage run --branch --source=. ./manage.py test booth -v 2 --keepdb 
           echo "::set-output name=tests_failed::$(echo $?)"
-        continue-on-error: true
-      - name: Set tests output
-        if: ${{ always() }}
-        run: echo "::set-output name=tests_failed::${{ steps.set-tests-output.outputs.tests_failed }}"
