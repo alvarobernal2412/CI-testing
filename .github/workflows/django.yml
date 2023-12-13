@@ -14,6 +14,8 @@ jobs:
         pyversion: ['3.10']
 
     runs-on: ubuntu-latest
+    outputs:
+      tests_failed: ${{ steps.set-tests-output.outputs.tests_failed }}
 
     services:
       postgres:
@@ -45,11 +47,9 @@ jobs:
         cd decide
         coverage run --branch --source=. ./manage.py test booth -v 2 --keepdb 
         echo "::set-output name=tests_failed::$(echo $?)"
+      id: set-tests-output
+      continue-on-error: true
 
-    - name: Create Issue on Test Failure
-      if: steps.test.outputs.tests_failed != '0'
-      run: node .github/scripts/create_issue.js
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-        GITHUB_REPOSITORY: ${{ github.repository }}
+    - name: Set tests output
+        if: ${{ always() }}
+        run: echo "::set-output name=tests_failed::${{ steps.set-tests-output.outputs.tests_failed }}"
