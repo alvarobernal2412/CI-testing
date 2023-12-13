@@ -43,7 +43,7 @@ jobs:
       id: test
       run: |
         cd decide
-        coverage run --branch --source=. ./manage.py test -v 2 --keepdb 
+        coverage run --branch --source=. ./manage.py test booth -v 2 --keepdb 
         echo "::set-output name=tests_failed::$(echo $?)"
 
     - name: Create Issue on Test Failure
