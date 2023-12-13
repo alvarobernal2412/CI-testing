@@ -42,12 +42,11 @@ jobs:
           pip install -r requirements.txt
           cp decide/local_settings.gactions.py decide/local_settings.py
       - name: Run tests
-        id: test
+        id: set-tests-output
         run: |
           cd decide
           coverage run --branch --source=. ./manage.py test booth -v 2 --keepdb 
           echo "::set-output name=tests_failed::$(echo $?)"
-        id: set-tests-output
         continue-on-error: true
       - name: Set tests output
         if: ${{ always() }}
