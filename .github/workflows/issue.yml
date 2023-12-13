@@ -33,20 +33,20 @@ jobs:
 
           echo "::set-output name=issue_number::$issue_number"
 
-      - name: Add Issue to GitHub Project
+      - name: Add Issue to Project Column
         if: steps.create-issue.outputs.issue_number != 'null'
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
         run: |
-          # Obtener el ID del proyecto en el repositorio 
-          project_id=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/projects" | jq '.[] | select(.name == "Incidents") | .id')
+          # Obtener el ID de la columna "OPEN" dentro del proyecto
+          column_id=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/projects/1/columns" | jq '.[] | select(.name == "OPEN") | .id')
 
-          # Agregar la issue creada al proyecto en el repositorio
+          # Agregar la issue creada a la columna "OPEN" en el proyecto
           curl -X POST \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github.inertia-preview+json" \
-            -H "Content-Type: application/json" \
-            -d "{\"content_id\":${{ steps.create-issue.outputs.issue_number }},\"content_type\":\"Issue\"}" \
-            "https://api.github.com/projects/${project_id}/items"
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -d "{\"note\":\"Add Issue ${{ steps.create-issue.outputs.issue_number }}\"}" \
+            "https://api.github.com/projects/columns/${column_id}/cards"
