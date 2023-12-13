@@ -17,12 +17,15 @@ jobs:
 
         run: |
           # Título y cuerpo de la issue
-          issue_title="Failure in CI - Decide"
-          issue_body="El flujo de trabajo ha fallado en la rama main."
+          issue_title="Error in CI (${{ github.event.workflow.name }} - Decide )"
+          issue_body="The workflow '${{ github.event.workflow.name }}' has failed in the main branch."
+
+          # Agregar las etiquetas al cuerpo del JSON
+          labels='"labels": ["Error", "Medium"], '
 
           # Crear la issue utilizando la API de GitHub
           curl -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
-            -d '{"title": "'"$issue_title"'", "body": "'"$issue_body"'"}' \
+            -d '{'"$labels"' "title": "'"$issue_title"'", "body": "'"$issue_body"'"}' \
             "https://api.github.com/repos/${{ github.repository }}/issues"
