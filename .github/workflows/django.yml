@@ -48,7 +48,7 @@ jobs:
 
     - name: Create Issue on Test Failure
       if: steps.test.outputs.tests_failed != '0'
-      run: node create_issue.js
+      run: node .github/scripts/create_issue.js
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
