@@ -33,15 +33,17 @@ jobs:
 
           echo "::set-output name=issue_number::$issue_number"
 
-      - name: Add Issue to Project Column
+      - name: Add Issue to GitHub Project
         if: steps.create-issue.outputs.issue_number != 'null'
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
         run: |
-          # Obtener el ID de la columna "OPEN" dentro del proyecto
+          # Obtener el ID del proyecto "Incidents" dentro del repositorio
+          project_id=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/usuario/repositorio/projects" | jq '.[] | select(.name == "Incidents") | .id')
           column_id=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/projects/1/columns" | jq '.[] | select(.name == "OPEN") | .id')
+            "https://api.github.com/repos/usuario/repositorio/projects/PROJECT_ID/columns" | jq '.[] | select(.name == "OPEN") | .id')
 
           # Agregar la issue creada a la columna "OPEN" en el proyecto
           curl -X POST \
