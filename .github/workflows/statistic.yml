@@ -31,6 +31,14 @@ jobs:
             _jq() {
               echo ${row} | base64 --decode | jq -r ${1}
             }
+            pr_id=$(_jq '.id')  # Assuming 'id' field contains the PR ID
+
+            # Check for duplicate PR ID before processing
+            if [[ " ${processedPRs[@]} " =~ " $pr_id " ]]; then
+              continue  # Skip processing if the PR ID is already processed
+            fi
+
+            processedPRs+=("$pr_id") 
             commits_url=$(_jq '.commits_url')
             diff_url=$(_jq '.diff_url')
 
