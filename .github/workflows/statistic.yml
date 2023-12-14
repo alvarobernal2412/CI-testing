@@ -52,8 +52,6 @@ jobs:
                 fi
               fi
             done
-            if [[ $IS_FOUND == true ]]; then
-            fi
           done
 
           # Muestra los resultados almacenados en el diccionario de commits
