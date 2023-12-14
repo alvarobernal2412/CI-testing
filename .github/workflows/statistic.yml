@@ -32,16 +32,17 @@ jobs:
               echo ${row} | base64 --decode | jq -r ${1}
             }
             commits_url=$(_jq '.commits_url')
-            echo "$commits_url"
+            
             commits=$(curl -sL -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" "$commits_url")
             
             for commit_row in $(echo "${commits}" | jq -r '.[] | @base64'); do
               _commit_jq() {
                 echo ${commit_row} | base64 --decode | jq -r ${1}
               }
+              
               committer_login=$(_commit_jq '.committer.name')
               commit_hash=$(_commit_jq '.sha')
-              
+              echo "$commit_hash"
               # Verifica si el committer login está en el diccionario de nombres
               if [[ $(echo "${dictionary}" | jq -r '.alvaro[]' | grep -cF "$committer_login") -ne 0 ]]; then
                 echo $"commit_hash"
