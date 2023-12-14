@@ -24,10 +24,10 @@ jobs:
           # Agregar las etiquetas al cuerpo del JSON
           labels='"labels": ["Error", "Medium"]'
 
-          # Crear la issue utilizando la API de GitHub y obtener el número de la issue creada
+          # Crear la issue utilizando la API de GitHub y asignarla al usuario que activó el flujo de trabajo
           issue_number=$(curl -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
-            -d '{'"$labels"', "title": "'"$issue_title"'", "body": "'"$issue_body"'"}' \
+            -d '{'"$labels"', "title": "'"$issue_title"'", "body": "'"$issue_body"'", "assignees": ["'${{ github.actor }}'"]}' \
             "https://api.github.com/repos/${{ github.repository }}/issues" | jq '.number')
-
+s
