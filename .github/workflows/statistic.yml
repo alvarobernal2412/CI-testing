@@ -1,0 +1,63 @@
+name: Statistics
+
+on:
+  pull_request:
+    branches:
+      - statistic
+
+jobs:
+  statistics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Retrieve PRs and Process Commits
+        id: get-prs
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          PRS=$(curl -sL \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/alvarobernal2412/CI-testing/pulls?state=all)
+          
+          declare -A commitsDictionary
+          dictionary='{"alvaro":["alvarobernal2412", "[[alvarobernal2412]]"]}' # Diccionario de nombres
+          
+          for row in $(echo "${PRS}" | jq -r '.[] | @base64'); do
+            _jq() {
+              echo ${row} | base64 --decode | jq -r ${1}
+            }
+            commits_url=$(_jq '.commits_url')
+            commits=$(curl -sL -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" "$commits_url")
+            
+            for commit_row in $(echo "${commits}" | jq -r '.[] | @base64'); do
+              _commit_jq() {
+                echo ${commit_row} | base64 --decode | jq -r ${1}
+              }
+              committer_login=$(_commit_jq '.committer.name')
+              commit_hash=$(_commit_jq '.sha')
+              
+              # Verifica si el committer login está en el diccionario de nombres
+              if [[ $(echo "${dictionary}" | jq -r '.alvaro[]' | grep -cF "$committer_login") -ne 0 ]]; then
+                echo commit_hash
+                # # Almacena el hash en el diccionario de commits para ese usuario
+                # if [[ -n "${commitsDictionary["alvaro"]}" ]]; then
+                #   commitsDictionary["alvaro"][1]+=" $commit_hash"
+                # else
+                #   commitsDictionary["alvaro"]=("0" "$commit_hash")
+                # fi
+              fi
+            done
+          done
+
+          # Muestra los resultados almacenados en el diccionario de commits
+          echo "Commits Dictionary:"
+          declare -p commitsDictionary
+
+      - name: Generate Wiki Document
+        run: |
+          # Aquí usas el diccionarioResultado para crear una tabla en el documento de la wiki
