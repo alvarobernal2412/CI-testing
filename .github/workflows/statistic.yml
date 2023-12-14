@@ -64,6 +64,8 @@ jobs:
                 # Realizar la resta entre los números extraídos
                 result=$((plus_num - minus_num))
                 echo "$result"
+              fi
+            fi
           done
 
           # Muestra los resultados almacenados en el diccionario de commits
