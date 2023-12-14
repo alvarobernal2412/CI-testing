@@ -32,7 +32,7 @@ jobs:
               echo ${row} | base64 --decode | jq -r ${1}
             }
             commits_url=$(_jq '.commits_url')
-            echo $"commits_url"
+            echo "$commits_url"
             commits=$(curl -sL -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" "$commits_url")
             
             for commit_row in $(echo "${commits}" | jq -r '.[] | @base64'); do
