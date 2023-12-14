@@ -56,8 +56,7 @@ jobs:
                 diff=$(curl -sL "$diff_url")
                 # Buscar el texto entre arrobas en 'diff'
                 found_text=$(echo "$diff" | grep -o '@@[^@]*@@')
-                echo "$found_text"
-                number=$(echo "$found_text" | sed -n 's/.*,\([0-9]*\) +[0-9]* @@/\1/p')
+                number=$(echo "$diff" | sed -n 's/.*,[0-9]* +[0-9]*,\([0-9]*\) @@/\1/p')
                 echo "$number"
               fi
             fi
