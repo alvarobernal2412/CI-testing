@@ -40,7 +40,7 @@ jobs:
               _commit_jq() {
                 echo ${commit_row} | base64 --decode | jq -r ${1}
               }
-              committer_login=$(_commit_jq '.committer.name')
+              committer_login=$(_commit_jq '.committer')
               commit_hash=$(_commit_jq '.sha')
               echo "$committer_login"
               # Verifica si el committer login está en el diccionario de nombres
