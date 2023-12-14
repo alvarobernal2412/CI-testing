@@ -24,13 +24,10 @@ jobs:
           # Agregar las etiquetas al cuerpo del JSON
           labels='"labels": ["Error", "Medium"]'
 
-          # Obtener el usuario que activó el flujo de trabajo
-          user_login=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/jobs" | jq -r '.workflow_runs[] | select(.id == '${{ github.event.workflow_run.id }}') | .head_commit.author.login')
-
-          # Crear la issue utilizando la API de GitHub y asignarla al usuario que activó el flujo de trabajo
+          # Crear la issue utilizando la API de GitHub y obtener el número de la issue creada
           issue_number=$(curl -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
-            -d '{'"$labels"', "title": "'"$issue_title"'", "body": "'"$issue_body"'", "assignees": ["'"$user_login"'"]}' \
+            -d '{'"$labels"', "title": "'"$issue_title"'", "body": "'"$issue_body"'"}' \
             "https://api.github.com/repos/${{ github.repository }}/issues" | jq '.number')
+
