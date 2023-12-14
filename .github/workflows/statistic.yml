@@ -43,7 +43,7 @@ jobs:
               
               # Verifica si el committer login está en el diccionario de nombres
               if [[ $(echo "${dictionary}" | jq -r '.alvaro[]' | grep -cF "$committer_login") -ne 0 ]]; then
-                echo commit_hash
+                echo ${commit_hash}
                 # # Almacena el hash en el diccionario de commits para ese usuario
                 # if [[ -n "${commitsDictionary["alvaro"]}" ]]; then
                 #   commitsDictionary["alvaro"][1]+=" $commit_hash"
