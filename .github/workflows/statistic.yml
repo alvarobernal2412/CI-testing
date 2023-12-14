@@ -64,9 +64,10 @@ jobs:
                 diff=$(curl -sL "$diff_url")
                 # Buscar el texto entre arrobas en 'diff'
                 for diff_header in $(echo "$diff" | grep -oE '@@[^@]*@@'); do
-                  added=$(echo "$diff_header" | awk -F'[+,]' '{ sum += $3 } END { print sum }')
-                  deleted=$(echo "$diff_header" | awk -F'[+,]' '{ sum += $2 } END { print sum }')
-                  new=$(echo "$diff_header" | awk -F'[+,]' '{ sum += $4 } END { print sum }')
+                  original=$(echo "$diff_header" | awk -F'[-,]' '{ print $2 }')
+                  deleted=$(echo "$diff_header" | awk -F'[-,]' '{ print $3 }')
+                  new=$(echo "$diff_header" | awk -F'[+,]' '{ print $2 }')
+                  added=$(echo "$diff_header" | awk -F'[+,]' '{ print $3 }')
 
                   total=$((added + deleted + new))
                 done
