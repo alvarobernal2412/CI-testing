@@ -63,9 +63,16 @@ jobs:
               if [[ ! -z "$diff_url" ]]; then
                 diff=$(curl -sL "$diff_url")
                 # Buscar el texto entre arrobas en 'diff'
-                found_text=$(echo "$diff" | grep -o '@@[^@]*@@')
-                number=$(echo "$diff" | sed -n 's/.*,[0-9]* +[0-9]*,\([0-9]*\) @@.*/\1/p')
-                echo " $pr_id con $number lineas de codigo y del user $committer_login"
+                for diff_header in $(echo "$diff" | grep -oE '@@[^@]*@@'); do
+                  added=$(echo "$diff_header" | awk -F'[+,]' '{ sum += $3 } END { print sum }')
+                  deleted=$(echo "$diff_header" | awk -F'[+,]' '{ sum += $2 } END { print sum }')
+                  new=$(echo "$diff_header" | awk -F'[+,]' '{ sum += $4 } END { print sum }')
+
+                  total=$((added + deleted + new))
+                done
+                # found_text=$(echo "$diff" | grep -o '@@[^@]*@@')
+                # number=$(echo "$diff" | sed -n 's/.*,[0-9]* +[0-9]*,\([0-9]*\) @@.*/\1/p')
+                echo " $pr_id con $total lineas de codigo y del user $committer_login"
               fi
             fi
           done
