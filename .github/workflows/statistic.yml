@@ -32,7 +32,7 @@ jobs:
               echo ${row} | base64 --decode | jq -r ${1}
             }
             commits_url=$(_jq '.commits_url')
-            diff_url= $(_jq '.diff_url')
+            diff_url=$(_jq '.diff_url')
 
             commits=$(curl -sL -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" "$commits_url")
             IS_FOUND=false
