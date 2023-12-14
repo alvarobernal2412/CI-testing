@@ -51,6 +51,21 @@ jobs:
                 fi
               fi
             done
+            if [[ $IS_FOUND == true ]]; then
+              if [[ ! -z "$diff_url" ]]; then
+                diff=$(curl -sL "$diff_url")
+                # Buscar el texto entre arrobas en 'diff'
+                found_text=$(echo "$diff" | grep -o '@@[^@]*@@')
+
+                # Extraer los números después de los símbolos + y - usando awk
+                plus_num=$(echo "$found_text" | awk -F '[+, ]' '{print $2}')
+                minus_num=$(echo "$found_text" | awk -F '[-, ]' '{print $4}')
+
+                # Realizar la resta entre los números extraídos
+                result=$((plus_num - minus_num))
+                echo "$result"
+              fi
+            fi
           done
 
           # Muestra los resultados almacenados en el diccionario de commits
