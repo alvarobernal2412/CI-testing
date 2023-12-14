@@ -32,7 +32,9 @@ jobs:
               echo ${row} | base64 --decode | jq -r ${1}
             }
             commits_url=$(_jq '.commits_url')
-            
+            diff_url= $(_jq '.diff_url')
+            echo "$diff_url"
+
             commits=$(curl -sL -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" "$commits_url")
             IS_FOUND=false
 
@@ -51,7 +53,6 @@ jobs:
               fi
             done
             if [[ $IS_FOUND == true ]]; then
-              diff_url= $(_jq '.diff_url')
               if [[ ! -z "$diff_url" ]]; then
                 diff=$(curl -sL -H "Accept: application/vnd.github.v3.diff" -H "Authorization: Bearer $GITHUB_TOKEN" "$diff_url")
                 # Buscar el texto entre arrobas en 'diff'
