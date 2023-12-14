@@ -55,7 +55,7 @@ jobs:
 
           # Muestra los resultados almacenados en el diccionario de commits
           echo "Commits Dictionary:"
-          echo "$commitsArray["alvaro"]"
+          echo "${commitsArray["alvaro"]}"
           declare -p commitsArray
 
       - name: Generate Wiki Document
