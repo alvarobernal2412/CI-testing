@@ -22,9 +22,9 @@ jobs:
 
           # Determinar la etiqueta basada en el GitHub.actor
           if [[ "${{ github.actor }}" == "alblopnov" || "${{ github.actor }}" == "alejandromd" || "${{ github.actor }}" == "davdelpal1" || "${{ github.actor }}" == "goncammej" || "${{ github.actor }}" == "JuanAntonioJimenezdelVillar" || "${{ github.actor }}" == "Thealean28" ]]; then
-              labels='"labels": ["Error", "Medium", "decide-part-lorca-1"]'
+              labels='"labels": ["Error", "Medium", "lorca-1"]'
           elif [[ "${{ github.actor }}" == "alvarobernal2412" || "${{ github.actor }}" == "josgarber6" || "${{ github.actor }}" == "alvgonfri" || "${{ github.actor }}" == "mangarrui" || "${{ github.actor }}" == "jmartinacu" || "${{ github.actor }}" == "sebasruii" ]]; then
-              labels='"labels": ["Error", "Medium", "decide-part-lorca-2"]'
+              labels='"labels": ["Error", "Medium", "lorca-2"]'
           else
               labels='"labels": ["Error", "Medium"]'
           fi
