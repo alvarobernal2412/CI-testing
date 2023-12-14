@@ -34,7 +34,7 @@ jobs:
             commits_url=$(_jq '.commits_url')
             
             commits=$(curl -sL -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" "$commits_url")
-            IS_FOUND=true
+            IS_FOUND=false
 
             for commit_row in $(echo "${commits}" | jq -r '.[] | @base64'); do
               _commit_jq() {
@@ -46,10 +46,24 @@ jobs:
               if [[ $(echo "${dictionary}" | jq -r '.alvaro[]' | grep -cF "$committer_login") -ne 0 ]]; then
                 IS_FOUND=$(if [[ $IS_FOUND == true || $(echo "${dictionary}" | jq -r '.alvaro[]' | grep -cF "$committer_login") -ne 0 ]]; then echo true; else echo false; fi)
                 if ! [[ " ${commitsArray["alvaro"]} " =~ " $commit_hash " ]]; then
-                  commitsArray["alvaro"]+="$commit_hash"
+                  commitsArray["alvaro"]+="$commit_hash "
                 fi
               fi
             done
+            if [[ $IS_FOUND == true ]]; then
+              diff_url= $(_jq '.diff_url')
+              if [[ ! -z "$diff_url" ]]; then
+                diff=$(curl -sL -H "Accept: application/vnd.github.v3.diff" -H "Authorization: Bearer $GITHUB_TOKEN" "$diff_url")
+                # Buscar el texto entre arrobas en 'diff'
+                found_text=$(echo "$diff" | grep -o '@@[^@]*@@')
+
+                # Extraer los números después de los símbolos + y - usando awk
+                plus_num=$(echo "$found_text" | awk -F '[+, ]' '{print $2}')
+                minus_num=$(echo "$found_text" | awk -F '[-, ]' '{print $4}')
+
+                # Realizar la resta entre los números extraídos
+                result=$((plus_num - minus_num))
+                echo "$result"
           done
 
           # Muestra los resultados almacenados en el diccionario de commits
