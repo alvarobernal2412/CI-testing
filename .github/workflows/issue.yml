@@ -40,9 +40,9 @@ jobs:
 
         run: |
           # Obtener el ID del proyecto "Incidents" dentro del repositorio
-          project_id=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+          project_id=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/alvarobernal2412/CI-testing/projects" | jq '.[] | select(.name == "Incidents") | .id')
-          column_id=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+          column_id=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/alvarobernal2412/CI-testing/projects/$project_id/columns" | jq '.[] | select(.name == "OPEN") | .id')
 
           # Agregar la issue creada a la columna "OPEN" en el proyecto
